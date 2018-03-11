@@ -1,0 +1,14 @@
+{
+  "name": "jpeg-canvas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mark Miro <markmirony@gmail.com> (http://markmiro.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "dat.gui": "^0.7.1"
+  }
+}
