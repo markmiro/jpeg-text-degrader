@@ -26,7 +26,7 @@
 
         #jpeg-text {
             width: 100%;
-            filter: brightness(28) saturate(300%) invert(100%) hue-rotate(227deg);
+            /* filter: brightness(28) saturate(300%) invert(100%) hue-rotate(227deg); */
         }
     </style>
     <script src="./node_modules/dat.gui/build/dat.gui.js"></script>
@@ -90,24 +90,9 @@
             start = 0;
         }
 
-        function setStyles(brightness, saturation, hueRotate, invert) {
-            const style = `
-                brightness(${brightness})
-                saturate(${saturation}%)
-                ${invert ? 'invert(100%)' : ''}
-                hue-rotate(${hueRotate}deg)
-            `;
-            document.getElementById('jpeg-text').style.filter = style;
-        }
-
         const WeirdText = function () {
-            // this.message = "Hello there!";
-            this.invert = true;
-            this.brightness = 28;
-            this.saturation = 300;
-            this.hueRotate = 227;
             this.quality = 0.1;
-            this.background = '#000000';
+            this.background = '#ffffff';
             this.foreground = '#0000ff';
             this.render = obj => {
                 Object.assign(this, obj);
@@ -117,38 +102,17 @@
                     this.background,
                     this.foreground
                 );
-                setStyles(
-                    this.brightness,
-                    this.saturation,
-                    this.hueRotate,
-                    this.invert
-                );
             };
             this.render({});
         }
 
         const weirdText = new WeirdText();
         const gui = new dat.GUI();
-        // gui.add(weirdText, 'message').onChange(
-        //     v => weirdText.render({ message: v })
-        // ).listen();
         gui.addColor(weirdText, 'background').onChange(
             v => weirdText.render({ background: v })
         );
         gui.addColor(weirdText, 'foreground').onChange(
             v => weirdText.render({ foreground: v })
-        );
-        gui.add(weirdText, 'invert').onChange(
-            v => weirdText.render({ invert: v })
-        );
-        gui.add(weirdText, 'brightness').onChange(
-            v => weirdText.render({ brightness: v })
-        );
-        gui.add(weirdText, 'saturation').onChange(
-            v => weirdText.render({ saturation: v })
-        );
-        gui.add(weirdText, 'hueRotate').onChange(
-            v => weirdText.render({ hueRotate: v })
         );
         gui.add(weirdText, 'quality').onChange(
             v => weirdText.render({ quality: v })
