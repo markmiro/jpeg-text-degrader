@@ -6,7 +6,8 @@ function drawText(
   background,
   foreground,
   inputX = 0,
-  inputY = 0
+  inputY = 0,
+  brightness
 ) {
   const testFontSize = 20;
   const baseQuality = quality;
@@ -33,6 +34,9 @@ function drawText(
 
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
+
+  // Filters
+  ctx.filter = `brightness(${brightness})`;
 
   // Background
   ctx.fillStyle = background;
@@ -68,13 +72,17 @@ const WeirdText = function() {
   this.background = "#ffffff";
   this.foreground = "#0000ff";
   this.enableDegrading = false;
+  this.brightness = 1;
   this.render = obj => {
     Object.assign(this, obj);
     drawText(
       document.getElementById("input").value,
       this.quality,
       this.background,
-      this.foreground
+      this.foreground,
+      0,
+      0,
+      this.brightness
     );
   };
   this.render({});
@@ -95,6 +103,9 @@ gui.add(weirdText, "enableDegrading").onChange(v => {
     window.requestAnimationFrame(step);
   }
 });
+gui
+  .add(weirdText, "brightness", 0, 30)
+  .onChange(v => weirdText.render({ brightness: v }));
 gui.remember(weirdText);
 
 document.getElementById("input").addEventListener("keydown", e => {
