@@ -2,10 +2,10 @@ let start;
 let animation = null;
 
 const WeirdText = function() {
-  this.quality = 0.1;
+  this.quality = 1;
   this.background = "#ffffff";
-  this.foreground = "#0000ff";
-  this.enableDegrading = false;
+  this.foreground = "#aa8dc1";
+  this.enableDegrading = true;
   this.brightness = 1;
   // Not for dat.gui:
   this.message = "Hello";
@@ -37,9 +37,6 @@ const WeirdText = function() {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Filters
-    ctx.filter = `brightness(${this.brightness})`;
-
     // Background
     ctx.fillStyle = this.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -60,6 +57,9 @@ const WeirdText = function() {
       ctx.fillText(line, x, y);
     });
 
+    // Filters
+    ctx.filter = `brightness(${this.brightness})`;
+
     // Convert text to JPEG
     const proportionalQuality = Math.max(
       1 - targetSize / baseQuality / 1000,
@@ -74,7 +74,9 @@ const WeirdText = function() {
     Object.assign(this, obj);
     this.drawText(document.getElementById("input").value);
   };
+
   this.render({});
+  this.enableDegrading && window.requestAnimationFrame(degradeStep);
 };
 
 // ---
@@ -93,7 +95,7 @@ gui
 gui.add(weirdText, "enableDegrading").onChange(v => {
   weirdText.enableDegrading = v;
   if (v) {
-    window.requestAnimationFrame(step);
+    window.requestAnimationFrame(degradeStep);
   }
 });
 gui
@@ -119,12 +121,12 @@ function degrade(quality) {
   document.getElementById("jpeg-text").src = url;
 }
 
-function step(timestamp) {
+function degradeStep(timestamp) {
   if (!start) start = timestamp;
   let progress = timestamp - start;
   if (!weirdText.enableDegrading) return;
   setTimeout(() => {
     degrade(1 / (progress / 500));
-    window.requestAnimationFrame(step);
+    window.requestAnimationFrame(degradeStep);
   }, 100);
 }
