@@ -106,7 +106,6 @@ gui.add(weirdText, "enableDegrading").onChange(v => {
 gui
   .add(weirdText, "brightness", 0, 30)
   .onChange(v => weirdText.render({ brightness: v }));
-gui.remember(weirdText);
 
 document.getElementById("input").addEventListener("keydown", e => {
   e.stopPropagation();
