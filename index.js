@@ -4,16 +4,16 @@ const ctx = canvas.getContext("2d");
 
 const WeirdText = function() {
   this.quality = 1;
-  this.background = "#ffffff";
-  this.foreground = "#29ad85";
+  this.background = "#317c2a";
+  this.foreground = "#d13a9e";
   this.fontSize = 100;
   this.enableDegrading = true;
   this.degradeRate = 500;
-  this.brightness = 84;
-  this.saturation = 175;
-  this.contrast = 242;
-  this.invert = 5;
-  this.hueRotate = 50;
+  this.brightness = 74;
+  this.saturation = 180;
+  this.contrast = 104;
+  this.invert = 0;
+  this.hueRotate = 11;
   this.xOffset = 0;
   this.yOffset = 0;
 
@@ -171,14 +171,14 @@ function degradeStep(timestamp) {
   // ctx.filter = "none";
   // ctx.rotate(0.1);
   // ctx.globalCompositeOperation = "overlay";
-  ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 200, 0, 1.05, -20, -10);
+  // ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 250, 0, 1.05, -20, -10);
   ctx.drawImage(img, 0, 0);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = weirdText.background + "22";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // weirdText.drawBackground();
-  // weirdText.xOffset = Math.cos(timestamp / 1000) * 50;
-  // weirdText.yOffset = Math.sin(timestamp / 1000) * 50;
+  // weirdText.xOffset = Math.cos(timestamp / 2000) * 30;
+  // weirdText.yOffset = Math.sin(timestamp / 2000) * 20;
   // ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
   //   weirdText.saturation
   // }%) invert(${weirdText.invert}%) contrast(${
