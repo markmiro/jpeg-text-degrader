@@ -4,16 +4,16 @@ const ctx = canvas.getContext("2d");
 
 const WeirdText = function() {
   this.quality = 1;
-  this.background = "#ffffff";
+  this.background = "#888888";
   this.foreground = "#00ff0a";
   this.fontSize = 100;
   this.enableDegrading = true;
   this.degradeRate = 500;
-  this.brightness = 84;
-  this.saturation = 188;
-  this.contrast = 138;
-  this.invert = 6;
-  this.hueRotate = 30;
+  this.brightness = 108;
+  this.saturation = 143;
+  this.contrast = 186;
+  this.invert = 24;
+  this.hueRotate = 23;
   this.xOffset = 0;
   this.yOffset = 0;
 
@@ -171,9 +171,9 @@ function degradeStep(timestamp) {
   // ctx.filter = "none";
   // ctx.rotate(0.1);
   // ctx.globalCompositeOperation = "overlay";
-  // ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 20, 0, 1.05, -20, -10);
+  ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 200, 0, 1.05, -20, -10);
   ctx.drawImage(img, 0, 0);
-  // ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = weirdText.background + "22";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // weirdText.drawBackground();
