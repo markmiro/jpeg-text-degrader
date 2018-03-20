@@ -4,12 +4,12 @@ const ctx = canvas.getContext("2d");
 
 const WeirdText = function() {
   this.quality = 1;
-  this.background = "#ffffff";
+  this.background = "#a0a0a0";
   this.foreground = "#ff0000";
   this.fontSize = 100;
   this.enableDegrading = true;
   this.degradeRate = 500;
-  this.brightness = 86;
+  this.brightness = 88;
   this.saturation = 151;
   this.contrast = 129;
   this.invert = 7;
