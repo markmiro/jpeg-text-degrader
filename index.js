@@ -4,16 +4,16 @@ const ctx = canvas.getContext("2d");
 
 const WeirdText = function() {
   this.quality = 1;
-  this.background = "#888888";
-  this.foreground = "#00ff0a";
+  this.background = "#ffffff";
+  this.foreground = "#29ad85";
   this.fontSize = 100;
   this.enableDegrading = true;
   this.degradeRate = 500;
-  this.brightness = 108;
-  this.saturation = 143;
-  this.contrast = 186;
-  this.invert = 24;
-  this.hueRotate = 23;
+  this.brightness = 84;
+  this.saturation = 175;
+  this.contrast = 242;
+  this.invert = 5;
+  this.hueRotate = 50;
   this.xOffset = 0;
   this.yOffset = 0;
 
@@ -187,7 +187,7 @@ function degradeStep(timestamp) {
   weirdText.drawText();
   // ctx.drawImage(img, 1, 0);
 
-  const url = canvas.toDataURL("image/jpeg", 0.7);
+  const url = canvas.toDataURL("image/jpeg", 0.9);
   document.getElementById("jpeg-text").src = url;
 
   window.requestAnimationFrame(degradeStep);
