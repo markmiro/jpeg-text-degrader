@@ -28,13 +28,26 @@ const WeirdText = function() {
     ctx.fillStyle = this.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (imageUpload.src) {
-      ctx.drawImage(
-        imageUpload,
-        0,
-        0,
+      function toFill(targetW, targetH, w, h) {
+        const shouldFillEnds = targetW / targetH > w / h;
+
+        if (shouldFillEnds) {
+          const newHeight = targetW * h / w;
+          const centerY = targetH / 2 - newHeight / 2;
+          return { width: targetW, height: newHeight, x: 0, y: centerY };
+        } else {
+          const newWidth = targetH * w / h;
+          const centerX = targetW / 2 - newWidth / 2;
+          return { width: newWidth, height: targetH, x: centerX, y: 0 };
+        }
+      }
+      const { width, height, x, y } = toFill(
         canvas.width,
-        canvas.width * imageUpload.naturalHeight / imageUpload.naturalWidth
+        canvas.height,
+        imageUpload.naturalWidth,
+        imageUpload.naturalHeight
       );
+      ctx.drawImage(imageUpload, x, y, width, height);
     }
   };
 
