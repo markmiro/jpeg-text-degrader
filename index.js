@@ -11,8 +11,8 @@ const WeirdText = function() {
   this.background = "#ff0000";
   this.foreground = "#ffffff";
   this.fontSize = 100;
-  this.enableDegrading = true;
-  this.degradeRate = 500;
+  this.degradeDuration = 4;
+  this.degradation = 1;
   this.brightness = 100;
   this.saturation = 100;
   this.contrast = 100;
@@ -115,15 +115,6 @@ const WeirdText = function() {
     this.drawBackground();
     this.drawText();
     start = undefined;
-    // if (
-    //   !this.enableDegrading ||
-    //   obj.message ||
-    //   obj.fontSize ||
-    //   obj.foreground ||
-    //   obj.background
-    // ) {
-
-    // }
   };
   this.drawBackground();
 };
@@ -144,12 +135,12 @@ gui
 gui
   .add(weirdText, "quality", 0, 1, 0.01)
   .onChange(v => weirdText.render({ quality: v }));
-gui.add(weirdText, "enableDegrading").onChange(v => {
-  weirdText.enableDegrading = v;
-});
 gui
-  .add(weirdText, "degradeRate", 0, 1000, 10)
-  .onChange(v => weirdText.render({ degradeRate: v }));
+  .add(weirdText, "degradeDuration", 2, 100, 0.5)
+  .onChange(v => weirdText.render({ degradeDuration: v }));
+gui
+  .add(weirdText, "degradation", 0, 1)
+  .onChange(v => weirdText.render({ degradation: v }));
 gui
   .add(weirdText, "brightness", 0, 200)
   .onChange(v => weirdText.render({ brightness: v }));
@@ -186,12 +177,9 @@ function sinEase(t) {
 }
 
 function degradeStep(timestamp) {
-  const secondsDuration = 2;
   if (!start) start = timestamp;
-  const progress = (timestamp - start) / (1000 * secondsDuration);
-  if (weirdText.enableDegrading && progress <= 1) {
-  }
-  const quality = Math.max(1 - progress, 0.1);
+  const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
+  const quality = Math.max(1 - progress * weirdText.degradation, 0.1);
   // console.log(quality);
   const img = document.getElementById("jpeg-text");
   // ctx.filter = "none";
