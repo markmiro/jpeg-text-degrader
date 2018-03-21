@@ -1,19 +1,23 @@
 let start;
+
+const imageUploadButton = document.querySelector('input[type="file"]');
+const imageUpload = document.getElementById("image-upload");
+const clearImageUploadButton = document.getElementById("clear-file");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 const WeirdText = function() {
   this.quality = 1;
-  this.background = "#317c2a";
-  this.foreground = "#d13a9e";
+  this.background = "#ff0000";
+  this.foreground = "#ffffff";
   this.fontSize = 100;
   this.enableDegrading = true;
   this.degradeRate = 500;
-  this.brightness = 74;
-  this.saturation = 180;
-  this.contrast = 104;
+  this.brightness = 100;
+  this.saturation = 100;
+  this.contrast = 100;
   this.invert = 0;
-  this.hueRotate = 11;
+  this.hueRotate = 0;
   this.xOffset = 0;
   this.yOffset = 0;
 
@@ -23,6 +27,15 @@ const WeirdText = function() {
   this.drawBackground = function() {
     ctx.fillStyle = this.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (imageUpload.src) {
+      ctx.drawImage(
+        imageUpload,
+        0,
+        0,
+        canvas.width,
+        canvas.width * imageUpload.naturalHeight / imageUpload.naturalWidth
+      );
+    }
   };
 
   this.drawText = function() {
@@ -146,7 +159,7 @@ document.getElementById("input").addEventListener("keydown", e => {
 });
 document.getElementById("input").addEventListener("input", e => {
   weirdText.message = e.target.value;
-  // weirdText.drawBackground();
+  weirdText.drawBackground();
   weirdText.drawText();
   start = undefined;
 });
@@ -160,12 +173,12 @@ function sinEase(t) {
 }
 
 function degradeStep(timestamp) {
-  const secondsDuration = 10;
+  const secondsDuration = 2;
   if (!start) start = timestamp;
   const progress = (timestamp - start) / (1000 * secondsDuration);
   if (weirdText.enableDegrading && progress <= 1) {
   }
-  // const quality = progress * 0.2 + 0.8;
+  const quality = Math.max(1 - progress, 0.1);
   // console.log(quality);
   const img = document.getElementById("jpeg-text");
   // ctx.filter = "none";
@@ -174,8 +187,8 @@ function degradeStep(timestamp) {
   // ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 250, 0, 1.05, -20, -10);
   ctx.drawImage(img, 0, 0);
   // ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = weirdText.background + "22";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // ctx.fillStyle = weirdText.background + "05";
+  // ctx.fillRect(0, 0, canvas.width, canvas.height);
   // weirdText.drawBackground();
   // weirdText.xOffset = Math.cos(timestamp / 2000) * 30;
   // weirdText.yOffset = Math.sin(timestamp / 2000) * 20;
@@ -185,21 +198,27 @@ function degradeStep(timestamp) {
   //   weirdText.contrast
   // }%) hue-rotate(${weirdText.hueRotate}deg)`;
   weirdText.drawText();
-  // ctx.drawImage(img, 1, 0);
 
-  const url = canvas.toDataURL("image/jpeg", 0.9);
+  const url = canvas.toDataURL("image/jpeg", quality);
   document.getElementById("jpeg-text").src = url;
+  ctx.drawImage(img, 0, 0);
 
   window.requestAnimationFrame(degradeStep);
 }
 window.requestAnimationFrame(degradeStep);
 
-// document
-// .querySelector('input[type="file"]')
-// .addEventListener("change", () => {
-//   if (this.files && this.files[0]) {
-//     const img = document.querySelector("img"); // $('img')[0]
-//     img.src = URL.createObjectURL(this.files[0]); // set src to file url
-//     img.onload = imageIsLoaded; // optional onload event listener
-//   }
-// });
+imageUploadButton.addEventListener("change", e => {
+  const files = e.target.files;
+  if (files && files[0]) {
+    imageUpload.src = URL.createObjectURL(files[0]); // set src to file url
+    imageUpload.onload = () => {
+      // canvas.setAttribute("width", imageUpload.naturalWidth);
+      // canvas.setAttribute("height", imageUpload.naturalHeight);
+      weirdText.render();
+    };
+  }
+});
+clearImageUploadButton.addEventListener("click", e => {
+  imageUpload.src = "";
+  weirdText.render();
+});

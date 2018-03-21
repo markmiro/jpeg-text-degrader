@@ -6,13 +6,20 @@
     <title>JPEG Text Degrader</title>
     <style>
         * {
-            padding: 0;
-            margin: 0;
             box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
         }
 
         body {
             background-color: #eee;
+        }
+
+        #image-upload {
+            width: 100px;
         }
 
         #canvas {
@@ -35,6 +42,7 @@
             outline: 1px solid white;
             margin-left: auto;
             margin-right: auto;
+            max-width: 100%;
             /* filter: brightness(28) saturate(300%) invert(100%) hue-rotate(227deg); */
         }
 
@@ -47,6 +55,9 @@
 
 <body>
     <textarea id="input">Hello</textarea>
+    <input type="file" accept="image/*" />
+    <img id="image-upload" />
+    <button id="clear-file">Clear File</button>
     <img id="jpeg-text" />
     <div id="browser-compatible">
         Use Chrome, Firefox, or any
