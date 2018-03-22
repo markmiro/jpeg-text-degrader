@@ -308,14 +308,6 @@ document.getElementById("input").addEventListener("input", e => {
   start = undefined;
 });
 
-function cosUpDown(t) {
-  return 1 - (Math.cos(Math.PI * 2 * t) / 2 + 0.5);
-}
-
-function sinEase(t) {
-  return Math.sin(t * Math.PI / 2) * 0.5 + 0.5;
-}
-
 function degradeStep(timestamp) {
   if (!start) start = timestamp;
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
@@ -329,9 +321,7 @@ function degradeStep(timestamp) {
     ctx.fillStyle = weirdText.background + "22";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
-  // weirdText.drawBackground();
-  // weirdText.xOffset = Math.cos(timestamp / 2000) * 30;
-  // weirdText.yOffset = Math.sin(timestamp / 2000) * 20;
+
   ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
     weirdText.saturation
   }%) invert(${weirdText.invert}%) contrast(${
@@ -357,8 +347,6 @@ imageUploadButton.addEventListener("change", e => {
   if (files && files[0]) {
     imageUpload.src = URL.createObjectURL(files[0]); // set src to file url
     imageUpload.onload = () => {
-      // canvas.setAttribute("width", imageUpload.naturalWidth);
-      // canvas.setAttribute("height", imageUpload.naturalHeight);
       weirdText.render();
     };
   }
@@ -368,11 +356,9 @@ clearImageUploadButton.addEventListener("click", e => {
   weirdText.render();
 });
 
-window.gui = gui;
-window.templates = templates;
 templateSelect.addEventListener("change", e => {
   const templateKey = e.target.value;
-  const template = window.templates[templateKey];
+  const template = templates[templateKey];
   Object.assign(weirdText, template);
   for (var i in gui.__controllers) {
     gui.__controllers[i].updateDisplay();
