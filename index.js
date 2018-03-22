@@ -4,22 +4,136 @@ const imageUploadButton = document.querySelector('input[type="file"]');
 const imageUpload = document.getElementById("image-upload");
 const clearImageUploadButton = document.getElementById("clear-file");
 const canvas = document.getElementById("canvas");
+const templateSelect = document.getElementById("template");
 const ctx = canvas.getContext("2d");
 
+const templates = {
+  redBlackComputerChip: {
+    isMarbled: false,
+    marbledQuality: 1,
+    quality: 0.15,
+    background: "#ffffff",
+    foreground: "#4a4151",
+    fontSize: 119,
+    degradeDuration: 30,
+    degradation: 0.009,
+    brightness: 114,
+    saturation: 121,
+    contrast: 145,
+    invert: 0,
+    hueRotate: 23,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: () => [1, 0, 0, 1, 0, 0]
+  },
+  basicCrush: {
+    isMarbled: false,
+    marbledQuality: 1,
+    quality: 1,
+    background: "#ffffff",
+    foreground: "#aa8dc1",
+    fontSize: 100,
+    degradeDuration: 5,
+    degradation: 0.01,
+    brightness: 100,
+    saturation: 100,
+    contrast: 100,
+    invert: 0,
+    hueRotate: 0,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: () => [1, 0, 0, 1, 0, 0]
+  },
+  marbledRainbow: {
+    isMarbled: true,
+    marbledQuality: 0.7,
+    quality: 1,
+    background: "#ffffff",
+    foreground: "#00ff0a",
+    fontSize: 100,
+    degradeDuration: 0,
+    degradation: 1,
+    brightness: 84,
+    saturation: 188,
+    contrast: 138,
+    invert: 6,
+    hueRotate: 30,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: () => [1, 0, 0, 1, 0, 0]
+  },
+  burntLawn: {
+    isMarbled: true,
+    marbledQuality: 0.9,
+    quality: 1,
+    background: "#317c2a",
+    foreground: "#d13a9e",
+    fontSize: 100,
+    degradeDuration: 0,
+    degradation: 1,
+    brightness: 74,
+    saturation: 180,
+    contrast: 104,
+    invert: 0,
+    hueRotate: 11,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: () => [1, 0, 0, 1, 0, 0]
+  },
+  chromaticWater: {
+    isMarbled: true,
+    marbledQuality: 0.9,
+    quality: 1,
+    background: "#ffffff",
+    foreground: "#29ad85",
+    fontSize: 100,
+    degradeDuration: 0,
+    degradation: 1,
+    brightness: 84,
+    saturation: 175,
+    contrast: 242,
+    invert: 5,
+    hueRotate: 50,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: timestamp => [
+      1.05,
+      Math.sin(timestamp / 1000) / 200,
+      0,
+      1.05,
+      -20,
+      -10
+    ]
+  },
+  tieDye: {
+    isMarbled: true,
+    marbledQuality: 0.7,
+    quality: 1,
+    background: "#888888",
+    foreground: "#00ff0a",
+    fontSize: 100,
+    degradeDuration: 0,
+    degradation: 1,
+    brightness: 108,
+    saturation: 143,
+    contrast: 186,
+    invert: 24,
+    hueRotate: 23,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: timestamp => [
+      1.05,
+      Math.sin(timestamp / 1000) / 200,
+      0,
+      1.05,
+      -20,
+      -10
+    ]
+  }
+};
+
 const WeirdText = function() {
-  this.quality = 1;
-  this.background = "#ff0000";
-  this.foreground = "#ffffff";
-  this.fontSize = 100;
-  this.degradeDuration = 4;
-  this.degradation = 1;
-  this.brightness = 100;
-  this.saturation = 100;
-  this.contrast = 100;
-  this.invert = 0;
-  this.hueRotate = 0;
-  this.xOffset = 0;
-  this.yOffset = 0;
+  Object.assign(this, templates[templateSelect.value]);
 
   // Not for dat.gui:
   this.message = "Hello";
@@ -124,6 +238,9 @@ const WeirdText = function() {
 const weirdText = new WeirdText();
 const gui = new dat.GUI();
 gui
+  .add(weirdText, "isMarbled")
+  .onChange(v => weirdText.render({ isMarbled: v }));
+gui
   .addColor(weirdText, "background")
   .onChange(v => weirdText.render({ background: v }));
 gui
@@ -132,6 +249,9 @@ gui
 gui
   .add(weirdText, "fontSize", 10, 200, 1)
   .onChange(v => weirdText.render({ fontSize: v }));
+gui
+  .add(weirdText, "marbledQuality", 0, 1)
+  .onChange(v => weirdText.render({ marbledQuality: v }));
 gui
   .add(weirdText, "quality", 0, 1, 0.01)
   .onChange(v => weirdText.render({ quality: v }));
@@ -163,7 +283,9 @@ document.getElementById("input").addEventListener("keydown", e => {
 });
 document.getElementById("input").addEventListener("input", e => {
   weirdText.message = e.target.value;
-  weirdText.drawBackground();
+  if (!weirdText.isMarbled) {
+    weirdText.drawBackground();
+  }
   weirdText.drawText();
   start = undefined;
 });
@@ -179,33 +301,37 @@ function sinEase(t) {
 function degradeStep(timestamp) {
   if (!start) start = timestamp;
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
-  const quality = Math.max(1 - progress * weirdText.degradation, 0.1);
+  const quality = Math.max(1 / progress * weirdText.degradation, 0);
   // console.log(quality);
   const img = document.getElementById("jpeg-text");
-  // ctx.filter = "none";
-  // ctx.rotate(0.1);
-  // ctx.globalCompositeOperation = "overlay";
-  // ctx.setTransform(1.05, Math.sin(timestamp / 1000) / 250, 0, 1.05, -20, -10);
+  ctx.setTransform(...weirdText.transformation(timestamp));
   ctx.drawImage(img, 0, 0);
-  // ctx.setTransform(1, 0, 0, 1, 0, 0);
-  // ctx.fillStyle = weirdText.background + "05";
-  // ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (weirdText.isMarbled) {
+    ctx.fillStyle = weirdText.background + "22";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
   // weirdText.drawBackground();
   // weirdText.xOffset = Math.cos(timestamp / 2000) * 30;
   // weirdText.yOffset = Math.sin(timestamp / 2000) * 20;
-  // ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
-  //   weirdText.saturation
-  // }%) invert(${weirdText.invert}%) contrast(${
-  //   weirdText.contrast
-  // }%) hue-rotate(${weirdText.hueRotate}deg)`;
-  weirdText.drawText();
+  ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
+    weirdText.saturation
+  }%) invert(${weirdText.invert}%) contrast(${
+    weirdText.contrast
+  }%) hue-rotate(${weirdText.hueRotate}deg)`;
+  if (weirdText.isMarbled) {
+    weirdText.drawText();
+  }
 
-  const url = canvas.toDataURL("image/jpeg", quality);
+  const url = canvas.toDataURL(
+    "image/jpeg",
+    weirdText.isMarbled ? weirdText.marbledQuality : quality
+  );
   document.getElementById("jpeg-text").src = url;
-  ctx.drawImage(img, 0, 0);
 
   window.requestAnimationFrame(degradeStep);
 }
+weirdText.render();
 window.requestAnimationFrame(degradeStep);
 
 imageUploadButton.addEventListener("change", e => {
@@ -221,5 +347,17 @@ imageUploadButton.addEventListener("change", e => {
 });
 clearImageUploadButton.addEventListener("click", e => {
   imageUpload.src = "";
+  weirdText.render();
+});
+
+window.gui = gui;
+window.templates = templates;
+templateSelect.addEventListener("change", e => {
+  const templateKey = e.target.value;
+  const template = window.templates[templateKey];
+  Object.assign(weirdText, template);
+  for (var i in gui.__controllers) {
+    gui.__controllers[i].updateDisplay();
+  }
   weirdText.render();
 });
