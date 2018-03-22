@@ -255,6 +255,7 @@ const WeirdText = function() {
 
 const weirdText = new WeirdText();
 const gui = new dat.GUI();
+gui.close();
 gui
   .add(weirdText, "isMarbled")
   .onChange(v => weirdText.render({ isMarbled: v }));
