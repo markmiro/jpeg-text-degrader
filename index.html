@@ -18,6 +18,11 @@
             background-color: #eee;
         }
 
+        #input {
+            text-align: center;
+            vertical-align: middle;
+        }
+
         #image-upload {
             width: 100px;
         }
@@ -29,6 +34,7 @@
             border: 1px solid black;
             outline: 1px solid white;
             width: 20%;
+            opacity: 0;
         }
 
         #canvas:hover {
@@ -38,11 +44,9 @@
         #jpeg-text {
             display: block;
             image-rendering: pixelated;
-            border: 1px solid black;
-            outline: 1px solid white;
             margin-left: auto;
             margin-right: auto;
-            max-width: 100%;
+            width: 100%;
             /* filter: brightness(28) saturate(300%) invert(100%) hue-rotate(227deg); */
         }
 
@@ -55,14 +59,14 @@
 
 <body>
     <textarea id="input">Hello</textarea>
-    <select id="template" value="redBlackComputerChip">
+    <select id="template">
+        <option value="marbledRainbow">Marbled Rainbow</option>
         <option value="pinkInk">Pink Ink</option>
         <option value="redBlackComputerChip">Red/Black Computer Chip</option>
         <option value="basicCrush">Basic Crush</option>
         <option value="tieDye">Tie Dye</option>
         <option value="burntLawn">Burnt Lawn</option>
         <option value="chromaticWater">Chromatic Water</option>
-        <option value="marbledRainbow">Marbled Rainbow</option>
     </select>
     <input type="file" accept="image/*" />
     <img id="image-upload" />
