@@ -8,6 +8,24 @@ const templateSelect = document.getElementById("template");
 const ctx = canvas.getContext("2d");
 
 const templates = {
+  pinkInk: {
+    isMarbled: false,
+    marbledQuality: 1,
+    quality: 0,
+    background: "#ffffff",
+    foreground: "#b75cff",
+    fontSize: 127,
+    degradeDuration: 33.5,
+    degradation: 0.063,
+    brightness: 111,
+    saturation: 145,
+    contrast: 90,
+    invert: 0,
+    hueRotate: 0,
+    xOffset: 0,
+    yOffset: 0,
+    transformation: () => [1, 0, 0, 1, 0, 0]
+  },
   redBlackComputerChip: {
     isMarbled: false,
     marbledQuality: 1,
