@@ -6,6 +6,7 @@ const clearImageUploadButton = document.getElementById("clear-file");
 const canvas = document.getElementById("canvas");
 const templateSelect = document.getElementById("template");
 const ctx = canvas.getContext("2d");
+const img = document.getElementById("jpeg-text");
 
 const templates = {
   pinkInk: {
@@ -239,7 +240,7 @@ const WeirdText = function() {
       0.1
     );
     const url = canvas.toDataURL("image/jpeg", proportionalQuality);
-    document.getElementById("jpeg-text").src = url;
+    img.src = url;
   };
 
   this.render = obj => {
@@ -291,7 +292,6 @@ function degradeStep(timestamp) {
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
   const quality = Math.max(1 / progress * weirdText.degradation, 0);
   // console.log(quality);
-  const img = document.getElementById("jpeg-text");
   ctx.setTransform(...weirdText.transformation(timestamp));
   ctx.drawImage(img, 0, 0);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -313,7 +313,7 @@ function degradeStep(timestamp) {
     "image/jpeg",
     weirdText.isMarbled ? weirdText.marbledQuality : quality
   );
-  document.getElementById("jpeg-text").src = url;
+  img.src = url;
 
   window.requestAnimationFrame(degradeStep);
 }
