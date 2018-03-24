@@ -7,6 +7,7 @@ const canvas = document.getElementById("canvas");
 const templateSelect = document.getElementById("template");
 const ctx = canvas.getContext("2d");
 const img = document.getElementById("jpeg-text");
+const downloadButton = document.getElementById("download-image");
 
 const templates = {
   pinkInk: {
@@ -314,6 +315,7 @@ function degradeStep(timestamp) {
     weirdText.isMarbled ? weirdText.marbledQuality : quality
   );
   img.src = url;
+  downloadButton.href = url;
 
   window.requestAnimationFrame(degradeStep);
 }
