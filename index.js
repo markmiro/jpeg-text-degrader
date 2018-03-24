@@ -1,3 +1,8 @@
+// https://stackoverflow.com/a/84699
+if (!window.chrome) {
+  document.body.innerText = "Please use Google Chrome";
+}
+
 let start;
 
 const imageUploadButton = document.querySelector('input[type="file"]');
