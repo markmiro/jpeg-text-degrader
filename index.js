@@ -3,6 +3,7 @@ if (!window.chrome) {
   document.body.innerText = "Please use Google Chrome";
 }
 
+let isRecording = false;
 let start;
 
 const imageUploadButton = document.querySelector('input[type="file"]');
@@ -158,6 +159,7 @@ const templates = {
 };
 
 const WeirdText = function() {
+  this.isRunning = true;
   Object.assign(this, templates[templateSelect.value]);
 
   // Not for dat.gui:
@@ -264,6 +266,12 @@ const update = key => v => weirdText.render({ [key]: v });
 const weirdText = new WeirdText();
 const gui = new dat.GUI();
 gui.close();
+gui.add(weirdText, "isRunning").onChange(v => {
+  weirdText.isRunning = v;
+  if (weirdText.isRunning) {
+    window.requestAnimationFrame(degradeStep);
+  }
+});
 gui.add(weirdText, "isMarbled").onChange(update("isMarbled"));
 gui.addColor(weirdText, "background").onChange(update("background"));
 gui.addColor(weirdText, "foreground").onChange(update("foreground"));
@@ -293,6 +301,43 @@ document.getElementById("input").addEventListener("input", e => {
   start = undefined;
 });
 
+let gif = null;
+let recordedFrames = 0;
+document
+  .getElementById("restart-start-recording-button")
+  .addEventListener("click", () => {
+    document.getElementById("save-recording-button").disabled = false;
+    recordedFrames = 0;
+    gif = new GIF({
+      workers: 3,
+      workerScript: "gif.worker.js",
+      quality: 5,
+      width: canvas.width,
+      height: canvas.height
+    });
+    gif.on("progress", progress => {
+      document.getElementById("save-recording-progress").innerText =
+        Math.round(progress * 100) + "%";
+    });
+    gif.on("finished", blob => {
+      weirdText.isRunning = true;
+      window.requestAnimationFrame(degradeStep);
+      gif = null;
+      document.getElementById("save-recording-progress").innerText = "";
+      window.open(URL.createObjectURL(blob));
+    });
+    weirdText.render({});
+    isRecording = true;
+  });
+document
+  .getElementById("save-recording-button")
+  .addEventListener("click", () => {
+    isRecording = false;
+    weirdText.isRunning = false;
+    gif.render();
+    document.getElementById("save-recording-button").disabled = true;
+  });
+
 function degradeStep(timestamp) {
   if (!start) start = timestamp;
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
@@ -320,9 +365,17 @@ function degradeStep(timestamp) {
     weirdText.isMarbled ? weirdText.marbledQuality : quality
   );
   img.src = url;
+  if (isRecording && gif) {
+    gif.addFrame(ctx, { copy: true, delay: 50 });
+    recordedFrames++;
+    document.getElementById("recorded-frames").innerText = recordedFrames;
+  }
+
   downloadButton.href = url;
 
-  window.requestAnimationFrame(degradeStep);
+  if (weirdText.isRunning) {
+    window.requestAnimationFrame(degradeStep);
+  }
 }
 weirdText.render();
 window.requestAnimationFrame(degradeStep);
