@@ -35,6 +35,7 @@
             outline: 1px solid white;
             width: 20%;
             opacity: 0;
+            pointer-events: none;
         }
 
         #canvas:hover {
@@ -66,6 +67,10 @@
     <img id="image-upload" />
     <button id="clear-file">Clear File</button>
     <img id="jpeg-text" />
+    <!--
+        Offscreen canvas would be ideal, but the spec is still in development
+        https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#Browser_compatibility
+    -->
     <canvas id="canvas" height="400px" width="800px"></canvas>
     <a id="download-image" download="degraded-text.jpeg">Download Image</a>
     <button id="restart-start-recording-button">Restart + Start Recording</button>
