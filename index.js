@@ -22,7 +22,7 @@ const templates = {
     quality: 0,
     background: "#ffffff",
     foreground: "#b75cff",
-    fontSize: 127,
+    fontSize: 0.5,
     degradeDuration: 33.5,
     degradation: 0.063,
     brightness: 111,
@@ -40,7 +40,7 @@ const templates = {
     quality: 0.15,
     background: "#ffffff",
     foreground: "#4a4151",
-    fontSize: 119,
+    fontSize: 0.5,
     degradeDuration: 30,
     degradation: 0.009,
     brightness: 114,
@@ -58,7 +58,7 @@ const templates = {
     quality: 1,
     background: "#ffffff",
     foreground: "#aa8dc1",
-    fontSize: 100,
+    fontSize: 0.5,
     degradeDuration: 5,
     degradation: 0.01,
     brightness: 100,
@@ -76,7 +76,7 @@ const templates = {
     quality: 1,
     background: "#ffffff",
     foreground: "#00ff0a",
-    fontSize: 100,
+    fontSize: 0.5,
     degradeDuration: 0,
     degradation: 1,
     brightness: 84,
@@ -94,7 +94,7 @@ const templates = {
     quality: 1,
     background: "#317c2a",
     foreground: "#d13a9e",
-    fontSize: 100,
+    fontSize: 0.5,
     degradeDuration: 0,
     degradation: 1,
     brightness: 74,
@@ -112,7 +112,7 @@ const templates = {
     quality: 1,
     background: "#ffffff",
     foreground: "#29ad85",
-    fontSize: 100,
+    fontSize: 0.5,
     degradeDuration: 0,
     degradation: 1,
     brightness: 84,
@@ -130,7 +130,7 @@ const templates = {
     quality: 1,
     background: "#888888",
     foreground: "#00ff0a",
-    fontSize: 100,
+    fontSize: 0.5,
     degradeDuration: 0,
     degradation: 1,
     brightness: 108,
@@ -213,13 +213,10 @@ const WeirdText = function() {
 
     // Draw text
     ctx.fillStyle = this.foreground;
-    ctx.textBaseline = "top";
+    ctx.textBaseline = "hanging";
     ctx.textAlign = "center";
     const lines = this.message.split("\n");
-    const targetSize = Math.min(
-      this.fontSize / 2,
-      getTargetSize(canvas, ctx, lines)
-    );
+    const targetSize = getTargetSize(canvas, ctx, lines) * this.fontSize;
     ctx.font = `${targetSize}px ${fontFamily}`;
     const yOffsetForCentering =
       canvas.height / 2 - lines.length * targetSize / 2;
@@ -337,8 +334,6 @@ function degradeStep(timestamp) {
   const quality = Math.max(1 / progress * weirdText.degradation, 0);
   // console.log(quality);
   if (weirdText.transformation) {
-    // 400 => -10
-    // 400 / 10 / 4
     const deltaX = -canvas.width / 10 / 4;
     const deltaY = -canvas.height / 10 / 4;
     ctx.setTransform(
