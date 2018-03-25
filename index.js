@@ -11,9 +11,9 @@ const imageUpload = document.getElementById("image-upload");
 const clearImageUploadButton = document.getElementById("clear-file");
 const canvas = document.getElementById("canvas");
 const templateSelect = document.getElementById("template");
-const ctx = canvas.getContext("2d");
 const img = document.getElementById("jpeg-text");
 const downloadButton = document.getElementById("download-image");
+let ctx = canvas.getContext("2d");
 
 const templates = {
   pinkInk: {
@@ -32,7 +32,7 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    transformation: () => [1, 0, 0, 1, 0, 0]
+    transformation: false
   },
   redBlackComputerChip: {
     isMarbled: false,
@@ -50,7 +50,7 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    transformation: () => [1, 0, 0, 1, 0, 0]
+    transformation: false
   },
   basicCrush: {
     isMarbled: false,
@@ -68,7 +68,7 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    transformation: () => [1, 0, 0, 1, 0, 0]
+    transformation: false
   },
   marbledRainbow: {
     isMarbled: true,
@@ -86,7 +86,7 @@ const templates = {
     hueRotate: 30,
     xOffset: 0,
     yOffset: 0,
-    transformation: () => [1, 0, 0, 1, 0, 0]
+    transformation: false
   },
   burntLawn: {
     isMarbled: true,
@@ -104,7 +104,7 @@ const templates = {
     hueRotate: 11,
     xOffset: 0,
     yOffset: 0,
-    transformation: () => [1, 0, 0, 1, 0, 0]
+    transformation: false
   },
   chromaticWater: {
     isMarbled: true,
@@ -122,14 +122,7 @@ const templates = {
     hueRotate: 50,
     xOffset: 0,
     yOffset: 0,
-    transformation: timestamp => [
-      1.05,
-      Math.sin(timestamp / 1000) / 200,
-      0,
-      1.05,
-      -20,
-      -10
-    ]
+    transformation: true
   },
   tieDye: {
     isMarbled: true,
@@ -147,18 +140,13 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    transformation: timestamp => [
-      1.05,
-      Math.sin(timestamp / 1000) / 200,
-      0,
-      1.05,
-      -20,
-      -10
-    ]
+    transformation: true
   }
 };
 
 const WeirdText = function() {
+  this.width = 600;
+  this.height = 300;
   this.isRunning = true;
   Object.assign(this, templates[templateSelect.value]);
 
@@ -229,7 +217,7 @@ const WeirdText = function() {
     ctx.textAlign = "center";
     const lines = this.message.split("\n");
     const targetSize = Math.min(
-      this.fontSize,
+      this.fontSize / 2,
       getTargetSize(canvas, ctx, lines)
     );
     ctx.font = `${targetSize}px ${fontFamily}`;
@@ -253,6 +241,9 @@ const WeirdText = function() {
 
   this.render = obj => {
     Object.assign(this, obj);
+    canvas.width = this.width;
+    canvas.height = this.height;
+    ctx = canvas.getContext("2d");
     this.drawBackground();
     this.drawText();
     start = undefined;
@@ -272,10 +263,12 @@ gui.add(weirdText, "isRunning").onChange(v => {
     window.requestAnimationFrame(degradeStep);
   }
 });
+gui.add(weirdText, "width").onChange(update("width"));
+gui.add(weirdText, "height").onChange(update("height"));
 gui.add(weirdText, "isMarbled").onChange(update("isMarbled"));
 gui.addColor(weirdText, "background").onChange(update("background"));
 gui.addColor(weirdText, "foreground").onChange(update("foreground"));
-gui.add(weirdText, "fontSize", 10, 200, 1).onChange(update("fontSize"));
+gui.add(weirdText, "fontSize").onChange(update("fontSize"));
 gui.add(weirdText, "marbledQuality", 0, 1).onChange(update("marbledQuality"));
 gui.add(weirdText, "quality", 0, 1, 0.01).onChange(update("quality"));
 gui
@@ -343,7 +336,20 @@ function degradeStep(timestamp) {
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
   const quality = Math.max(1 / progress * weirdText.degradation, 0);
   // console.log(quality);
-  ctx.setTransform(...weirdText.transformation(timestamp));
+  if (weirdText.transformation) {
+    // 400 => -10
+    // 400 / 10 / 4
+    const deltaX = -canvas.width / 10 / 4;
+    const deltaY = -canvas.height / 10 / 4;
+    ctx.setTransform(
+      1.05,
+      Math.sin(timestamp / 1000) / 200,
+      0,
+      1.05,
+      deltaX,
+      deltaY
+    );
+  }
   ctx.drawImage(img, 0, 0);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   if (weirdText.isMarbled) {
