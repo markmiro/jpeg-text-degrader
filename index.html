@@ -63,7 +63,7 @@
         <option value="burntLawn">Burnt Lawn</option>
         <option value="chromaticWater">Chromatic Water</option>
     </select>
-    <input type="file" accept="image/*" />
+    <input id="image-uploader" type="file" accept="image/*" />
     <img id="image-upload" />
     <button id="clear-file">Clear File</button>
     <img id="jpeg-text" />
@@ -72,7 +72,8 @@
         https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#Browser_compatibility
     -->
     <canvas id="canvas"></canvas>
-    <a id="download-settings" download="settings.json">Download Settings</a>
+    <input id="settings-uploader" type="file" accept=".json" />
+    <a id="download-settings" download="json-degrader-settings.json">Download Settings</a>
     <a id="download-image" download="degraded-text.jpeg">Download Image</a>
     <button id="restart-start-recording-button">Restart + Start Recording</button>
     <span id="recorded-frames"></span>

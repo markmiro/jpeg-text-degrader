@@ -6,7 +6,8 @@ if (!window.chrome) {
 let isRecording = false;
 let start;
 
-const imageUploadButton = document.querySelector('input[type="file"]');
+const settingsUploadButton = document.getElementById("settings-uploader");
+const imageUploadButton = document.getElementById("image-uploader");
 const imageUpload = document.getElementById("image-upload");
 const clearImageUploadButton = document.getElementById("clear-file");
 const canvas = document.getElementById("canvas");
@@ -412,6 +413,17 @@ imageUploadButton.addEventListener("change", e => {
 clearImageUploadButton.addEventListener("click", e => {
   imageUpload.src = "";
   weirdText.render();
+});
+settingsUploadButton.addEventListener("change", e => {
+  const files = e.target.files;
+  if (files && files[0]) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const savedSettings = JSON.parse(reader.result);
+      weirdText.render(savedSettings);
+    };
+    reader.readAsText(files[0]);
+  }
 });
 
 templateSelect.addEventListener("change", e => {
