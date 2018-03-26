@@ -265,18 +265,18 @@ gui.add(weirdText, "height").onChange(update("height"));
 gui.add(weirdText, "isMarbled").onChange(update("isMarbled"));
 gui.addColor(weirdText, "background").onChange(update("background"));
 gui.addColor(weirdText, "foreground").onChange(update("foreground"));
-gui.add(weirdText, "fontSize").onChange(update("fontSize"));
+gui.add(weirdText, "fontSize");
 gui.add(weirdText, "marbledQuality", 0, 1).onChange(update("marbledQuality"));
 gui.add(weirdText, "quality", 0, 1, 0.01).onChange(update("quality"));
 gui
   .add(weirdText, "degradeDuration", 2, 100, 0.5)
   .onChange(update("degradeDuration"));
 gui.add(weirdText, "degradation", 0, 1).onChange(update("degradation"));
-gui.add(weirdText, "brightness", 0, 200).onChange(update("brightness"));
-gui.add(weirdText, "saturation", 0, 200, 1).onChange(update("saturation"));
-gui.add(weirdText, "invert", 0, 100, 1).onChange(update("invert"));
-gui.add(weirdText, "contrast", 0, 400, 1).onChange(update("contrast"));
-gui.add(weirdText, "hueRotate", 0, 360, 1).onChange(update("hueRotate"));
+gui.add(weirdText, "brightness", 0).onChange(update("brightness"));
+gui.add(weirdText, "saturation", 0).onChange(update("saturation"));
+gui.add(weirdText, "invert", 0).onChange(update("invert"));
+gui.add(weirdText, "contrast", 0).onChange(update("contrast"));
+gui.add(weirdText, "hueRotate", 0).onChange(update("hueRotate"));
 
 // Prevent pressing "h" hidding dat.gui
 document.getElementById("input").addEventListener("keydown", e => {
