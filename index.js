@@ -17,8 +17,8 @@ let ctx = canvas.getContext("2d");
 
 const templates = {
   pinkInk: {
-    isMarbled: false,
-    marbledQuality: 1,
+    shouldRedrawText: false,
+    refillOpacity: 0.135,
     quality: 0,
     background: "#ffffff",
     foreground: "#b75cff",
@@ -32,11 +32,11 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    transformation: false
+    shouldBurst: false
   },
   redBlackComputerChip: {
-    isMarbled: false,
-    marbledQuality: 1,
+    shouldRedrawText: false,
+    refillOpacity: 0.135,
     quality: 0.15,
     background: "#ffffff",
     foreground: "#4a4151",
@@ -50,11 +50,11 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    transformation: false
+    shouldBurst: false
   },
   basicCrush: {
-    isMarbled: false,
-    marbledQuality: 1,
+    shouldRedrawText: false,
+    refillOpacity: 0.135,
     quality: 1,
     background: "#ffffff",
     foreground: "#aa8dc1",
@@ -68,17 +68,17 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    transformation: false
+    shouldBurst: false
   },
   marbledRainbow: {
-    isMarbled: true,
-    marbledQuality: 0.7,
-    quality: 1,
+    shouldRedrawText: true,
+    refillOpacity: 0.135,
+    quality: 0.7,
     background: "#ffffff",
     foreground: "#00ff0a",
     fontSize: 0.5,
     degradeDuration: 0,
-    degradation: 1,
+    degradation: 0,
     brightness: 84,
     saturation: 188,
     contrast: 138,
@@ -86,17 +86,17 @@ const templates = {
     hueRotate: 30,
     xOffset: 0,
     yOffset: 0,
-    transformation: false
+    shouldBurst: false
   },
   burntLawn: {
-    isMarbled: true,
-    marbledQuality: 0.9,
-    quality: 1,
+    shouldRedrawText: true,
+    refillOpacity: 0.135,
+    quality: 0.9,
     background: "#317c2a",
     foreground: "#d13a9e",
     fontSize: 0.5,
     degradeDuration: 0,
-    degradation: 1,
+    degradation: 0,
     brightness: 74,
     saturation: 180,
     contrast: 104,
@@ -104,17 +104,17 @@ const templates = {
     hueRotate: 11,
     xOffset: 0,
     yOffset: 0,
-    transformation: false
+    shouldBurst: false
   },
   chromaticWater: {
-    isMarbled: true,
-    marbledQuality: 0.9,
-    quality: 1,
+    shouldRedrawText: true,
+    refillOpacity: 0.135,
+    quality: 0.9,
     background: "#ffffff",
     foreground: "#29ad85",
     fontSize: 0.5,
     degradeDuration: 0,
-    degradation: 1,
+    degradation: 0,
     brightness: 84,
     saturation: 175,
     contrast: 242,
@@ -122,17 +122,17 @@ const templates = {
     hueRotate: 50,
     xOffset: 0,
     yOffset: 0,
-    transformation: true
+    shouldBurst: true
   },
   tieDye: {
-    isMarbled: true,
-    marbledQuality: 0.7,
-    quality: 1,
+    shouldRedrawText: true,
+    refillOpacity: 0.135,
+    quality: 0.7,
     background: "#888888",
     foreground: "#00ff0a",
     fontSize: 0.5,
     degradeDuration: 0,
-    degradation: 1,
+    degradation: 0,
     brightness: 108,
     saturation: 143,
     contrast: 186,
@@ -140,7 +140,7 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    transformation: true
+    shouldBurst: true
   }
 };
 
@@ -262,11 +262,12 @@ gui.add(weirdText, "isRunning").onChange(v => {
 });
 gui.add(weirdText, "width").onChange(update("width"));
 gui.add(weirdText, "height").onChange(update("height"));
-gui.add(weirdText, "isMarbled").onChange(update("isMarbled"));
+gui.add(weirdText, "shouldRedrawText").onChange(update("shouldRedrawText"));
+gui.add(weirdText, "shouldBurst").onChange(update("shouldBurst"));
+gui.add(weirdText, "refillOpacity", 0, 1).onChange(update("refillOpacity"));
 gui.addColor(weirdText, "background").onChange(update("background"));
 gui.addColor(weirdText, "foreground").onChange(update("foreground"));
 gui.add(weirdText, "fontSize");
-gui.add(weirdText, "marbledQuality", 0, 1).onChange(update("marbledQuality"));
 gui.add(weirdText, "quality", 0, 1, 0.01).onChange(update("quality"));
 gui
   .add(weirdText, "degradeDuration", 2, 100, 0.5)
@@ -284,7 +285,7 @@ document.getElementById("input").addEventListener("keydown", e => {
 });
 document.getElementById("input").addEventListener("input", e => {
   weirdText.message = e.target.value;
-  if (!weirdText.isMarbled) {
+  if (!weirdText.shouldRedrawText) {
     weirdText.drawBackground();
   }
   weirdText.drawText();
@@ -339,9 +340,12 @@ document.getElementById("clear-gif-button").addEventListener("click", () => {
 function degradeStep(timestamp) {
   if (!start) start = timestamp;
   const progress = (timestamp - start) / (1000 * weirdText.degradeDuration);
-  const quality = Math.max(1 / progress * weirdText.degradation, 0);
+  let quality =
+    weirdText.degradation === 0
+      ? weirdText.quality
+      : Math.max(1 / progress * weirdText.degradation, 0);
   // console.log(quality);
-  if (weirdText.transformation) {
+  if (weirdText.shouldBurst) {
     const deltaX = -canvas.width / 10 / 4;
     const deltaY = -canvas.height / 10 / 4;
     ctx.setTransform(
@@ -360,8 +364,12 @@ function degradeStep(timestamp) {
     document.getElementById("recorded-frames").innerText = recordedFrames;
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  if (weirdText.isMarbled) {
-    ctx.fillStyle = weirdText.background + "22";
+  if (weirdText.shouldRedrawText) {
+    const fillOpacityInHex = Math.min(
+      255,
+      Math.round(Math.abs(255 * weirdText.refillOpacity))
+    ).toString(16);
+    ctx.fillStyle = weirdText.background + fillOpacityInHex;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
@@ -370,14 +378,11 @@ function degradeStep(timestamp) {
   }%) invert(${weirdText.invert}%) contrast(${
     weirdText.contrast
   }%) hue-rotate(${weirdText.hueRotate}deg)`;
-  if (weirdText.isMarbled) {
+  if (weirdText.shouldRedrawText) {
     weirdText.drawText();
   }
 
-  const url = canvas.toDataURL(
-    "image/jpeg",
-    weirdText.isMarbled ? weirdText.marbledQuality : quality
-  );
+  const url = canvas.toDataURL("image/jpeg", quality);
   img.src = url;
 
   downloadButton.href = url;
