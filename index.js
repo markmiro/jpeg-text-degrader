@@ -346,6 +346,11 @@ function degradeStep(timestamp) {
     );
   }
   ctx.drawImage(img, 0, 0);
+  if (isRecording && gif) {
+    gif.addFrame(ctx, { copy: true, delay: 50 });
+    recordedFrames++;
+    document.getElementById("recorded-frames").innerText = recordedFrames;
+  }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   if (weirdText.isMarbled) {
     ctx.fillStyle = weirdText.background + "22";
@@ -366,11 +371,6 @@ function degradeStep(timestamp) {
     weirdText.isMarbled ? weirdText.marbledQuality : quality
   );
   img.src = url;
-  if (isRecording && gif) {
-    gif.addFrame(ctx, { copy: true, delay: 50 });
-    recordedFrames++;
-    document.getElementById("recorded-frames").innerText = recordedFrames;
-  }
 
   downloadButton.href = url;
 
