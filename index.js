@@ -314,7 +314,10 @@ document
       window.requestAnimationFrame(degradeStep);
       gif = null;
       document.getElementById("save-recording-progress").innerText = "";
-      window.open(URL.createObjectURL(blob));
+      const src = URL.createObjectURL(blob);
+      document.getElementById("download-gif-link").href = src;
+      document.getElementById("clear-gif-button").disabled = false;
+      document.getElementById("gif-preview").src = src;
     });
     weirdText.render({});
     isRecording = true;
@@ -327,6 +330,11 @@ document
     gif.render();
     document.getElementById("save-recording-button").disabled = true;
   });
+document.getElementById("clear-gif-button").addEventListener("click", () => {
+  document.getElementById("download-gif-link").href = "";
+  document.getElementById("clear-gif-button").disabled = true;
+  document.getElementById("gif-preview").src = "";
+});
 
 function degradeStep(timestamp) {
   if (!start) start = timestamp;
