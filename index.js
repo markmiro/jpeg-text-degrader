@@ -244,6 +244,12 @@ const WeirdText = function() {
     this.drawBackground();
     this.drawText();
     start = undefined;
+    const settingsBlob = new Blob([JSON.stringify(this, null, 2)], {
+      type: "application/json"
+    });
+    document.getElementById("download-settings").href = URL.createObjectURL(
+      settingsBlob
+    );
   };
   this.drawBackground();
 };
