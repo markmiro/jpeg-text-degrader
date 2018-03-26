@@ -24,7 +24,7 @@ const templates = {
     foreground: "#b75cff",
     fontSize: 0.5,
     degradeDuration: 33.5,
-    degradation: 0.063,
+    degradation: 6.3,
     brightness: 111,
     saturation: 145,
     contrast: 90,
@@ -42,7 +42,7 @@ const templates = {
     foreground: "#4a4151",
     fontSize: 0.5,
     degradeDuration: 30,
-    degradation: 0.009,
+    degradation: 0.9,
     brightness: 114,
     saturation: 121,
     contrast: 145,
@@ -60,7 +60,7 @@ const templates = {
     foreground: "#aa8dc1",
     fontSize: 0.5,
     degradeDuration: 5,
-    degradation: 0.01,
+    degradation: 1,
     brightness: 100,
     saturation: 100,
     contrast: 100,
@@ -272,7 +272,7 @@ gui.add(weirdText, "quality", 0, 1, 0.01).onChange(update("quality"));
 gui
   .add(weirdText, "degradeDuration", 2, 100, 0.5)
   .onChange(update("degradeDuration"));
-gui.add(weirdText, "degradation", 0, 1).onChange(update("degradation"));
+gui.add(weirdText, "degradation", 0, 10, 0.01).onChange(update("degradation"));
 gui.add(weirdText, "brightness", 0).onChange(update("brightness"));
 gui.add(weirdText, "saturation", 0).onChange(update("saturation"));
 gui.add(weirdText, "invert", 0).onChange(update("invert"));
@@ -343,7 +343,7 @@ function degradeStep(timestamp) {
   let quality =
     weirdText.degradation === 0
       ? weirdText.quality
-      : Math.max(1 / progress * weirdText.degradation, 0);
+      : Math.max(1 / progress * (weirdText.degradation / 100), 0);
   // console.log(quality);
   if (weirdText.shouldBurst) {
     const deltaX = -canvas.width / 10 / 4;
