@@ -375,7 +375,9 @@ function degradeStep(timestamp) {
     const fillOpacityInHex = Math.min(
       255,
       Math.round(Math.abs(255 * weirdText.refillOpacity))
-    ).toString(16);
+    )
+      .toString(16)
+      .padStart(2, "0");
     ctx.fillStyle = weirdText.background + fillOpacityInHex;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
