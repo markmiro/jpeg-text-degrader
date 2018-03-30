@@ -17,6 +17,52 @@ const downloadButton = document.getElementById("download-image");
 let ctx = canvas.getContext("2d");
 
 const templates = {
+  punkFire: {
+    width: 600,
+    height: 300,
+    isRunning: true,
+    shouldRedrawText: true,
+    refillOpacity: 0.25808636748518204,
+    quality: 0.66,
+    background: "#000000",
+    foreground: "#ff0000",
+    fontSize: 0.6099999999999999,
+    degradeDuration: 2,
+    degradation: 0,
+    brightness: 44,
+    saturation: 300,
+    contrast: 400,
+    invert: 0,
+    hueRotate: 28,
+    xOffset: 0,
+    yOffset: 0,
+    shouldBurst: false,
+    shouldFlame: true,
+    message: "punk fire"
+  },
+  pinkFire: {
+    width: 600,
+    height: 300,
+    isRunning: true,
+    shouldRedrawText: true,
+    refillOpacity: 0.16054191363251483,
+    quality: 0.4,
+    background: "#c622c0",
+    foreground: "#0065ff",
+    fontSize: 0.5,
+    degradeDuration: 2,
+    degradation: 0,
+    brightness: 88,
+    saturation: 220,
+    contrast: 196,
+    invert: 20,
+    hueRotate: 27,
+    xOffset: 0,
+    yOffset: 0,
+    shouldBurst: false,
+    shouldFlame: true,
+    message: "Hello"
+  },
   pinkInk: {
     shouldRedrawText: false,
     refillOpacity: 0.135,
@@ -33,7 +79,8 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: false
+    shouldBurst: false,
+    shouldFlame: false
   },
   redBlackComputerChip: {
     shouldRedrawText: false,
@@ -51,7 +98,8 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: false
+    shouldBurst: false,
+    shouldFlame: false
   },
   basicCrush: {
     shouldRedrawText: false,
@@ -69,7 +117,8 @@ const templates = {
     hueRotate: 0,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: false
+    shouldBurst: false,
+    shouldFlame: false
   },
   marbledRainbow: {
     shouldRedrawText: true,
@@ -87,7 +136,8 @@ const templates = {
     hueRotate: 30,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: false
+    shouldBurst: false,
+    shouldFlame: false
   },
   burntLawn: {
     shouldRedrawText: true,
@@ -105,7 +155,8 @@ const templates = {
     hueRotate: 11,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: false
+    shouldBurst: false,
+    shouldFlame: false
   },
   chromaticWater: {
     shouldRedrawText: true,
@@ -123,7 +174,8 @@ const templates = {
     hueRotate: 50,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: true
+    shouldBurst: true,
+    shouldFlame: false
   },
   tieDye: {
     shouldRedrawText: true,
@@ -141,7 +193,8 @@ const templates = {
     hueRotate: 23,
     xOffset: 0,
     yOffset: 0,
-    shouldBurst: true
+    shouldBurst: true,
+    shouldFlame: false
   }
 };
 
@@ -361,6 +414,17 @@ function degradeStep(timestamp) {
       0,
       1.05,
       deltaX,
+      deltaY
+    );
+  } else if (weirdText.shouldFlame) {
+    const scaleFactorY = 1.2;
+    const deltaY = (canvas.height - canvas.height * scaleFactorY) / 2;
+    ctx.setTransform(
+      1.0,
+      Math.sin(timestamp / 1000) / 100,
+      0,
+      scaleFactorY,
+      0,
       deltaY
     );
   }
