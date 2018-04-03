@@ -1,0 +1,17 @@
+{
+  "name": "jpeg-text-degrader",
+  "version": "1.0.0",
+  "description": "Makes text look bad",
+  "main": "server.js",
+  "repository": "https://github.com/markmiro/jpeg-text-degrader.git",
+  "author": "Mark Mironyuk <contact@markmiro.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  },
+  "scripts": {
+    "start": "yarn run http-server"
+  }
+}
