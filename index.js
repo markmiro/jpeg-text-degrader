@@ -197,6 +197,7 @@ const templates = {
 };
 
 const WeirdText = function() {
+  this.fullWidth = true;
   this.width = 600;
   this.height = 300;
   this.isRunning = true;
@@ -302,6 +303,13 @@ const WeirdText = function() {
     document.getElementById("download-settings").href = URL.createObjectURL(
       settingsBlob
     );
+    if (this.fullWidth) {
+      !img.classList.contains("gif-preview--full") &&
+        img.classList.add("gif-preview--full");
+    } else {
+      img.classList.contains("gif-preview--full") &&
+        img.classList.remove("gif-preview--full");
+    }
   };
   this.drawBackground();
 };
@@ -318,6 +326,7 @@ gui.add(weirdText, "isRunning").onChange(v => {
     window.requestAnimationFrame(degradeStep);
   }
 });
+gui.add(weirdText, "fullWidth").onChange(update("fullWidth"));
 gui.add(weirdText, "width").onChange(update("width"));
 gui.add(weirdText, "height").onChange(update("height"));
 gui.add(weirdText, "shouldRedrawText").onChange(update("shouldRedrawText"));
