@@ -37,8 +37,7 @@ const templates = {
     xOffset: 0,
     yOffset: 0,
     shouldBurst: false,
-    shouldFlame: true,
-    message: "punk fire"
+    shouldFlame: true
   },
   pinkFire: {
     width: 600,
@@ -60,8 +59,7 @@ const templates = {
     xOffset: 0,
     yOffset: 0,
     shouldBurst: false,
-    shouldFlame: true,
-    message: "Hello"
+    shouldFlame: true
   },
   pinkInk: {
     shouldRedrawText: false,
