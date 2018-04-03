@@ -334,7 +334,7 @@ gui.add(weirdText, "shouldBurst").onChange(update("shouldBurst"));
 gui.add(weirdText, "refillOpacity", 0, 1).onChange(update("refillOpacity"));
 gui.addColor(weirdText, "background").onChange(update("background"));
 gui.addColor(weirdText, "foreground").onChange(update("foreground"));
-gui.add(weirdText, "fontSize");
+gui.add(weirdText, "fontSize").onChange(update("fontSize"));
 gui.add(weirdText, "quality", 0, 1, 0.01).onChange(update("quality"));
 gui
   .add(weirdText, "degradeDuration", 2, 100, 0.5)
