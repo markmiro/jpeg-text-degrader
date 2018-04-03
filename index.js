@@ -206,9 +206,16 @@ const WeirdText = function() {
   // Not for dat.gui:
   this.message = "Hello";
 
-  this.drawBackground = function() {
-    ctx.fillStyle = this.background;
+  this.drawBackground = function(opts = { isRefilling: false }) {
+    const fillOpacityInHex = () =>
+      Math.min(255, Math.round(Math.abs(255 * weirdText.refillOpacity)))
+        .toString(16)
+        .padStart(2, "0");
+
+    ctx.fillStyle =
+      weirdText.background + (opts.isRefilling ? fillOpacityInHex() : "ff");
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     if (imageUpload.src) {
       function toFill(targetW, targetH, w, h) {
         const shouldFillEnds = targetW / targetH > w / h;
@@ -229,7 +236,9 @@ const WeirdText = function() {
         imageUpload.naturalWidth,
         imageUpload.naturalHeight
       );
+      if (opts.isRefilling) ctx.globalAlpha = this.refillOpacity;
       ctx.drawImage(imageUpload, x, y, width, height);
+      ctx.globalAlpha = 1;
     }
   };
 
@@ -256,13 +265,6 @@ const WeirdText = function() {
       // console.log('targetSizeBasedOnTotalHeight', targetSizeBasedOnTotalHeight);
       return Math.min(targetSize, targetSizeBasedOnTotalHeight);
     }
-
-    // Filters
-    ctx.filter = `brightness(${this.brightness}%) saturate(${
-      this.saturation
-    }%) invert(${this.invert}%) contrast(${this.contrast}%) hue-rotate(${
-      this.hueRotate
-    }deg)`;
 
     // Draw text
     ctx.fillStyle = this.foreground;
@@ -294,8 +296,10 @@ const WeirdText = function() {
     canvas.width = this.width;
     canvas.height = this.height;
     ctx = canvas.getContext("2d");
-    this.drawBackground();
-    this.drawText();
+    if (!this.shouldRedrawText) {
+      this.drawBackground();
+      this.drawText();
+    }
     start = undefined;
     const settingsBlob = new Blob([JSON.stringify(this, null, 2)], {
       type: "application/json"
@@ -311,7 +315,6 @@ const WeirdText = function() {
         img.classList.remove("gif-preview--full");
     }
   };
-  this.drawBackground();
 };
 
 // ---
@@ -443,14 +446,7 @@ function degradeStep(timestamp) {
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   if (weirdText.shouldRedrawText) {
-    const fillOpacityInHex = Math.min(
-      255,
-      Math.round(Math.abs(255 * weirdText.refillOpacity))
-    )
-      .toString(16)
-      .padStart(2, "0");
-    ctx.fillStyle = weirdText.background + fillOpacityInHex;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    weirdText.drawBackground({ isRefilling: true });
   }
 
   ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
