@@ -35,11 +35,7 @@
             pointer-events: none;
         }
 
-        #canvas:hover {
-            width: 60%;
-        }
-
-        #jpeg-text,
+        #canvas2,
         #gif-preview {
             display: block;
             margin-left: auto;
@@ -69,15 +65,16 @@
     <input id="image-uploader" type="file" accept="image/*" />
     <img id="image-upload" />
     <button id="clear-file">Clear File</button>
-    <img id="jpeg-text" />
+    <canvas id="canvas2"></canvas>
     <!--
         Offscreen canvas would be ideal, but the spec is still in development
         https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#Browser_compatibility
     -->
     <canvas id="canvas"></canvas>
+    <img id="jpeg-text" />
     <input id="settings-uploader" type="file" accept=".json" />
     <a id="download-settings" download="json-degrader-settings.json">Download Settings</a>
-    <a id="download-image" download="degraded-text.jpeg">Download Image</a>
+    <button id="download-image">Download Image</button>
     <button id="restart-start-recording-button">Restart + Start Recording</button>
     <span id="recorded-frames"></span>
     <button id="save-recording-button" disabled>Save Recording</button>

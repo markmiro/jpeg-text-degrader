@@ -10,11 +10,14 @@ const settingsUploadButton = document.getElementById("settings-uploader");
 const imageUploadButton = document.getElementById("image-uploader");
 const imageUpload = document.getElementById("image-upload");
 const clearImageUploadButton = document.getElementById("clear-file");
-const canvas = document.getElementById("canvas");
 const templateSelect = document.getElementById("template");
 const img = document.getElementById("jpeg-text");
 const downloadButton = document.getElementById("download-image");
+
+const canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
+let canvas2 = document.getElementById("canvas2");
+let ctx2 = canvas2.getContext("2d");
 
 const templates = {
   punkFire: {
@@ -201,6 +204,13 @@ const WeirdText = function() {
   this.width = 600;
   this.height = 300;
   this.isRunning = true;
+
+  this.brightness2 = 100;
+  this.saturation2 = 100;
+  this.contrast2 = 100;
+  this.invert2 = 0;
+  this.hueRotate2 = 0;
+
   Object.assign(this, templates[templateSelect.value]);
 
   // Not for dat.gui:
@@ -281,26 +291,23 @@ const WeirdText = function() {
       const y = yBasedOnLine + yOffsetForCentering;
       ctx.fillText(line, x + this.xOffset, y + this.yOffset);
     });
-
-    // Convert text to JPEG
-    const proportionalQuality = Math.max(
-      1 - targetSize / baseQuality / 1000,
-      0.1
-    );
-    const url = canvas.toDataURL("image/jpeg", proportionalQuality);
-    img.src = url;
   };
 
   this.render = obj => {
     Object.assign(this, obj);
-    canvas.width = this.width;
-    canvas.height = this.height;
+    canvas2.width = canvas.width = this.width;
+    canvas2.height = canvas.height = this.height;
     ctx = canvas.getContext("2d");
+    ctx2 = canvas2.getContext("2d");
+
+    start = undefined;
+
     if (!this.shouldRedrawText) {
       this.drawBackground();
       this.drawText();
+      img.src = canvas.toDataURL("image/jpeg", this.quality);
     }
-    start = undefined;
+
     const settingsBlob = new Blob([JSON.stringify(this, null, 2)], {
       type: "application/json"
     });
@@ -308,11 +315,11 @@ const WeirdText = function() {
       settingsBlob
     );
     if (this.fullWidth) {
-      !img.classList.contains("gif-preview--full") &&
-        img.classList.add("gif-preview--full");
+      !canvas2.classList.contains("gif-preview--full") &&
+        canvas2.classList.add("gif-preview--full");
     } else {
-      img.classList.contains("gif-preview--full") &&
-        img.classList.remove("gif-preview--full");
+      canvas2.classList.contains("gif-preview--full") &&
+        canvas2.classList.remove("gif-preview--full");
     }
   };
 };
@@ -348,6 +355,11 @@ gui.add(weirdText, "saturation", 0).onChange(update("saturation"));
 gui.add(weirdText, "invert", 0).onChange(update("invert"));
 gui.add(weirdText, "contrast", 0).onChange(update("contrast"));
 gui.add(weirdText, "hueRotate", 0).onChange(update("hueRotate"));
+gui.add(weirdText, "brightness2", 0).onChange(update("brightness2"));
+gui.add(weirdText, "saturation2", 0).onChange(update("saturation2"));
+gui.add(weirdText, "invert2", 0).onChange(update("invert2"));
+gui.add(weirdText, "contrast2", 0).onChange(update("contrast2"));
+gui.add(weirdText, "hueRotate2", 0).onChange(update("hueRotate2"));
 
 // Prevent pressing "h" hidding dat.gui
 document.getElementById("input").addEventListener("keydown", e => {
@@ -439,14 +451,13 @@ function degradeStep(timestamp) {
     );
   }
   ctx.drawImage(img, 0, 0);
-  if (isRecording && gif) {
-    gif.addFrame(ctx, { copy: true, delay: 50 });
-    recordedFrames++;
-    document.getElementById("recorded-frames").innerText = recordedFrames;
-  }
+
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   if (weirdText.shouldRedrawText) {
-    weirdText.drawBackground({ isRefilling: true });
+    weirdText.drawBackground({
+      isRefilling: true
+    });
+    weirdText.drawText();
   }
 
   ctx.filter = `brightness(${weirdText.brightness}%) saturate(${
@@ -454,14 +465,22 @@ function degradeStep(timestamp) {
   }%) invert(${weirdText.invert}%) contrast(${
     weirdText.contrast
   }%) hue-rotate(${weirdText.hueRotate}deg)`;
-  if (weirdText.shouldRedrawText) {
-    weirdText.drawText();
-  }
 
   const url = canvas.toDataURL("image/jpeg", quality);
   img.src = url;
 
-  downloadButton.href = url;
+  ctx2.filter = `brightness(${weirdText.brightness2}%) saturate(${
+    weirdText.saturation2
+  }%) invert(${weirdText.invert2}%) contrast(${
+    weirdText.contrast2
+  }%) hue-rotate(${weirdText.hueRotate2}deg)`;
+  ctx2.drawImage(canvas, 0, 0);
+
+  if (isRecording && gif) {
+    gif.addFrame(ctx2, { copy: true, delay: 50 });
+    recordedFrames++;
+    document.getElementById("recorded-frames").innerText = recordedFrames;
+  }
 
   if (weirdText.isRunning) {
     window.requestAnimationFrame(degradeStep);
@@ -503,4 +522,15 @@ templateSelect.addEventListener("change", e => {
     gui.__controllers[i].updateDisplay();
   }
   weirdText.render();
+});
+
+// https://stackoverflow.com/a/15832662
+downloadButton.addEventListener("click", () => {
+  const dataUrl = canvas2.toDataURL("image/jpeg", 1);
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = "degraded-text.jpeg";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 });
