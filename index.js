@@ -11,10 +11,10 @@ const imageUploadButton = document.getElementById("image-uploader");
 const imageUpload = document.getElementById("image-upload");
 const clearImageUploadButton = document.getElementById("clear-file");
 const templateSelect = document.getElementById("template");
-const img = document.getElementById("jpeg-text");
+const img = document.createElement("img");
 const downloadButton = document.getElementById("download-image");
 
-const canvas = document.getElementById("canvas");
+const canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 let canvas2 = document.getElementById("canvas2");
 let ctx2 = canvas2.getContext("2d");
@@ -293,7 +293,7 @@ const WeirdText = function() {
     });
   };
 
-  this.render = obj => {
+  this.reset = obj => {
     Object.assign(this, obj);
     canvas2.width = canvas.width = this.width;
     canvas2.height = canvas.height = this.height;
@@ -326,7 +326,7 @@ const WeirdText = function() {
 
 // ---
 
-const update = key => v => weirdText.render({ [key]: v });
+const update = key => v => weirdText.reset({ [key]: v });
 const weirdText = new WeirdText();
 const gui = new dat.GUI();
 gui.close();
@@ -402,7 +402,7 @@ document
       document.getElementById("clear-gif-button").disabled = false;
       document.getElementById("gif-preview").src = src;
     });
-    weirdText.render({});
+    weirdText.reset({});
     isRecording = true;
   });
 document
@@ -486,7 +486,7 @@ function degradeStep(timestamp) {
     window.requestAnimationFrame(degradeStep);
   }
 }
-weirdText.render();
+weirdText.reset();
 window.requestAnimationFrame(degradeStep);
 
 imageUploadButton.addEventListener("change", e => {
@@ -494,13 +494,13 @@ imageUploadButton.addEventListener("change", e => {
   if (files && files[0]) {
     imageUpload.src = URL.createObjectURL(files[0]); // set src to file url
     imageUpload.onload = () => {
-      weirdText.render();
+      weirdText.reset();
     };
   }
 });
 clearImageUploadButton.addEventListener("click", e => {
   imageUpload.src = "";
-  weirdText.render();
+  weirdText.reset();
 });
 settingsUploadButton.addEventListener("change", e => {
   const files = e.target.files;
@@ -508,7 +508,7 @@ settingsUploadButton.addEventListener("change", e => {
     const reader = new FileReader();
     reader.onload = () => {
       const savedSettings = JSON.parse(reader.result);
-      weirdText.render(savedSettings);
+      weirdText.reset(savedSettings);
     };
     reader.readAsText(files[0]);
   }
@@ -521,7 +521,7 @@ templateSelect.addEventListener("change", e => {
   for (var i in gui.__controllers) {
     gui.__controllers[i].updateDisplay();
   }
-  weirdText.render();
+  weirdText.reset();
 });
 
 // https://stackoverflow.com/a/15832662

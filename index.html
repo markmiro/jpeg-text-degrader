@@ -27,14 +27,6 @@
             width: 100px;
         }
 
-        #canvas {
-            bottom: 0;
-            right: 0;
-            position: fixed;
-            opacity: 0;
-            pointer-events: none;
-        }
-
         #canvas2,
         #gif-preview {
             display: block;
@@ -66,12 +58,6 @@
     <img id="image-upload" />
     <button id="clear-file">Clear File</button>
     <canvas id="canvas2"></canvas>
-    <!--
-        Offscreen canvas would be ideal, but the spec is still in development
-        https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#Browser_compatibility
-    -->
-    <canvas id="canvas"></canvas>
-    <img id="jpeg-text" />
     <input id="settings-uploader" type="file" accept=".json" />
     <a id="download-settings" download="json-degrader-settings.json">Download Settings</a>
     <button id="download-image">Download Image</button>
